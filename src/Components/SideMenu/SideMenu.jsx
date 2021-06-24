@@ -1,9 +1,30 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import './SideMenu.css';
+import MenuItem from '../MenuItems/MenuItem';
 
-const SideMenu = () => {
+
+const SideMenu = ({onCollapse}) => {
     const [inactive, setInactive] = useState(false);
 
+    useEffect(()=>{
+        if(inactive) document.querySelectorAll('.sub-menu').forEach((element)=> element.classList.remove('active'))
+        onCollapse(inactive);
+    },[inactive])
+
+    const menuItems= [
+        {name:'Dashboard', exact: true ,to: '/', iconClass:'bi bi-speedometer2'},
+        {name: 'Content', exact: true ,to: '/content',  iconClass: 'bi bi-basket' ,subMenus : [{
+                name: 'Courses',
+                to:'/content/courses'
+            }, 
+            {
+                name:'Videos',
+                exact: true,
+                to:'/content/videos'
+            }
+        ]},
+        {name: 'Design', exact: true ,to: '/design', iconClass:'bi bi-vector-pen'}
+    ]
     return (
        <div className={`side-menu ${inactive ? "inactive": ""}`}>
             <div className='top-section'>
@@ -23,7 +44,22 @@ const SideMenu = () => {
 
             <div className='main-menu'>
                 <ul>
-                    <li>
+
+                    {menuItems.map((menuItem, index)=>(
+                        <MenuItem
+                        key={index}
+                        exact={menuItem.exact}
+                        iconClass={menuItem.iconClass}
+                        onClick = {()=>{
+                            if(inactive) setInactive(false)
+                        }}
+                        name={menuItem.name}
+                        to={menuItem.to}
+                        subMenus={menuItem.subMenus || []}
+                        />
+                    ))}
+
+                    {/* <li>
                         <a 
                         href='abcd.com' className='menu-item'>
                             <div className='menu-icon'>
@@ -35,29 +71,17 @@ const SideMenu = () => {
                         </a>
                     </li>
 
-                    <li>
-                        <a 
-                        href='abcd.com' className='menu-item'>
-                            <div className='menu-icon'>
-                            <i class="bi bi-newspaper"></i>
-                            </div>
-                            <span>
-                                Content
-                            </span>
-                        </a>
-                        <ul className='sub-menu'>
-                            <li>
-                                <a>
-                                    Courses
-                                </a>
-                            </li>
-                            <li>
-                                <a>
-                                    Videos
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                   <MenuItem
+                   name={'Content'}
+                   subMenus = {[
+                       {
+                           name: 'Courses'
+                       }, 
+                       {
+                           name:'Videos'
+                       }
+                   ]}
+                   />
 
                     <li>
                         <a 
@@ -69,7 +93,7 @@ const SideMenu = () => {
                                 Design
                             </span>
                         </a>
-                    </li>
+                    </li> */}
                 </ul>
             </div>
 
